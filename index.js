@@ -166,6 +166,18 @@ function cli() {
         return acc
     }, {});
 
+    // Docker Engine 29+ (API 1.52) no longer sends the legacy status/id/from
+    // event fields that docker-allcontainers relies on to find new containers.
+    // DOCKER_API_VERSION (e.g. 1.44) pins an API version that still has them.
+    // Only supported with a unix socket (the default /var/run/docker.sock).
+    var dockerHost = process.env.DOCKER_HOST || 'unix:///var/run/docker.sock';
+    if (process.env.DOCKER_API_VERSION && dockerHost.indexOf('unix://') === 0) {
+        argv.docker = {
+            socketPath: dockerHost.substring(7) || '/var/run/docker.sock',
+            version: 'v' + process.env.DOCKER_API_VERSION.replace(/^v/, '')
+        };
+    }
+
     start(argv);
 }
 
