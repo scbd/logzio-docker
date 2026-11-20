@@ -12,6 +12,9 @@
   },
   "author": "Ran Ramati <ran@logz.io>",
   "license": "MIT",
+  "engines": {
+    "node": "^22.23.4 || ^24.22.1 || >=26.12.1"
+  },
   "dependencies": {
     "docker-allcontainers": "0.8.0",
     "docker-event-log": "0.1.3",
