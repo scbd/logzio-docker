@@ -28,6 +28,13 @@ function getOrCreateLogger(type, opts) {
         if (opts.endpoint) {
             config['host'] = opts.endpoint
         }
+        // Allow override port
+        if (opts.port) {
+            config['port'] = opts.port
+        }
+        if (opts.urlPath) {
+            config['urlPath'] = opts.urlPath
+        }
         console.log('Starting with config:')
         console.log(config)
         logger = logzioLogger.createLogger(config);
@@ -130,7 +137,9 @@ function cli() {
             secure: (process.env.LOGZIO_SECURE === undefined) ? true : (process.env.LOGZIO_SECURE.toLowerCase() === 'true'),
             add: (process.env.LOGZIO_ADD === undefined) ? ['host=' + os.hostname()] : process.env.LOGZIO_ADD,
             token: process.env.LOGZIO_TOKEN,
-            zone: process.env.LOGZIO_ZONE
+            zone: process.env.LOGZIO_ZONE,
+            port: process.env.ENDPOINT_PORT,
+            urlPath: process.env.ENDPOINT_URL_PATH
         }
     });
 
@@ -156,6 +165,18 @@ function cli() {
         acc[arg[0]] = arg[1];
         return acc
     }, {});
+
+    // Docker Engine 29+ (API 1.52) no longer sends the legacy status/id/from
+    // event fields that docker-allcontainers relies on to find new containers.
+    // DOCKER_API_VERSION (e.g. 1.44) pins an API version that still has them.
+    // Only supported with a unix socket (the default /var/run/docker.sock).
+    var dockerHost = process.env.DOCKER_HOST || 'unix:///var/run/docker.sock';
+    if (process.env.DOCKER_API_VERSION && dockerHost.indexOf('unix://') === 0) {
+        argv.docker = {
+            socketPath: dockerHost.substring(7) || '/var/run/docker.sock',
+            version: 'v' + process.env.DOCKER_API_VERSION.replace(/^v/, '')
+        };
+    }
 
     start(argv);
 }
