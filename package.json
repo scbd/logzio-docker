@@ -20,7 +20,7 @@
     "dockerode": "2.4.3",
     "minimist": "1.2.0",
     "through2": "2.0.3",
-    "logzio-nodejs": "1.0.3",
+    "logzio-nodejs": "github:scbd/logzio-nodejs#5de277e9fe453e4bce775a5ceb0d56084594c40f",
     "is-json": "2.0.1"
   }
 }

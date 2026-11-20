@@ -28,6 +28,13 @@ function getOrCreateLogger(type, opts) {
         if (opts.endpoint) {
             config['host'] = opts.endpoint
         }
+        // Allow override port
+        if (opts.port) {
+            config['port'] = opts.port
+        }
+        if (opts.urlPath) {
+            config['urlPath'] = opts.urlPath
+        }
         console.log('Starting with config:')
         console.log(config)
         logger = logzioLogger.createLogger(config);
@@ -130,7 +137,9 @@ function cli() {
             secure: (process.env.LOGZIO_SECURE === undefined) ? true : (process.env.LOGZIO_SECURE.toLowerCase() === 'true'),
             add: (process.env.LOGZIO_ADD === undefined) ? ['host=' + os.hostname()] : process.env.LOGZIO_ADD,
             token: process.env.LOGZIO_TOKEN,
-            zone: process.env.LOGZIO_ZONE
+            zone: process.env.LOGZIO_ZONE,
+            port: process.env.ENDPOINT_PORT,
+            urlPath: process.env.ENDPOINT_URL_PATH
         }
     });
 
